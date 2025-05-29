@@ -3,3 +3,4 @@ requests
 pillow
 numpy==1.19.2
 matplotlib==3.3.2
+setuptools
