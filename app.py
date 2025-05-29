@@ -60,8 +60,7 @@ buffered = io.BytesIO()
 image.save(buffered, quality=90, format='JPEG')
 
 # Base 64 encode.
-img_str = base64.b64encode(buffered.getvalue())
-img_str = img_str.decode('ascii')
+image_data = buffered.getvalue()
 
 ## Construct the URL to retrieve image.
 upload_url = ''.join([
@@ -75,11 +74,7 @@ upload_url = ''.join([
 ])
 
 ## POST to the API.
-r = requests.post(upload_url,
-                  data=img_str,
-                  headers={
-    'Content-Type': 'application/x-www-form-urlencoded'
-})
+r = requests.post(upload_url, files={"image": image_data})
 
 image = Image.open(BytesIO(r.content))
 
@@ -98,11 +93,7 @@ upload_url = ''.join([
 ])
 
 ## POST to the API.
-r = requests.post(upload_url,
-                  data=img_str,
-                  headers={
-    'Content-Type': 'application/x-www-form-urlencoded'
-})
+r = requests.post(upload_url, files={"image": image_data})
 
 ## Save the JSON.
 output_dict = r.json()
@@ -124,3 +115,8 @@ st.pyplot(fig)
 ## Display the JSON in main app.
 st.write('### JSON Output')
 st.write(r.json())
+
+if r.status_code == 200:
+    output_dict = r.json()
+else:
+    st.error(f"API error: {r.status_code} - {r.text}")
